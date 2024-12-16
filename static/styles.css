@@ -69,3 +69,115 @@
     height: 30vh;
 }
  
+
+/* Ensure all images in post_content are responsive and maintain 16:9 aspect ratio */
+.post-content img {
+    width: 100%; /* Full width */
+    aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+    object-fit: cover; /* Ensure content fits nicely inside the defined aspect ratio */
+    display: block; /* Remove inline spacing issues */
+    margin: 0 auto; /* Center the images if needed */
+}
+
+
+/* Base styles for the body */
+body {
+    font-size: clamp(16px, 1.5vw, 18px); /* Dynamically scales between 16px and 18px */
+    line-height: 1.7; /* Comfortable line height for paragraphs */
+    margin: 0;
+    padding: 0;
+    color: #333; /* Dark gray for readability */
+    background-color: #f9f9f9; /* Light background for contrast */
+}
+
+/* Headings */
+h1 {
+    font-size: clamp(28px, 3vw, 36px); /* Main heading, responsive */
+    font-weight: bold;
+    line-height: 1.4;
+    color: #222; /* Slightly darker for emphasis */
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+h2 {
+    font-size: clamp(24px, 2.5vw, 28px); /* Secondary heading */
+    font-weight: bold;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 0.8rem;
+    margin-top: 1.5rem;
+}
+
+h3 {
+    font-size: clamp(20px, 2vw, 24px); /* Tertiary heading */
+    font-weight: bold;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Paragraphs */
+p {
+    font-size: clamp(16px, 1.5vw, 18px); /* Standard paragraph text */
+    margin-bottom: 1.5rem;
+    color: #555; /* Subtle gray for a softer look */
+}
+
+/* Small text (e.g., captions or notes) */
+small {
+    font-size: clamp(14px, 1.2vw, 16px); /* Slightly smaller text */
+    color: #666; /* Lighter gray for less emphasis */
+}
+
+/* Links */
+a {
+    font-size: inherit; /* Match surrounding text size */
+    text-decoration: none;
+    color: #0077cc; /* Blog-friendly blue */
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #0056a3; /* Darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+    font-size: clamp(16px, 1.5vw, 18px); /* Matches paragraph text size */
+    margin-bottom: 1.5rem;
+    padding-left: 2rem; /* Indent for clarity */
+    line-height: 1.7;
+}
+
+/* Blockquotes */
+blockquote {
+    font-size: clamp(18px, 2vw, 20px);
+    font-style: italic;
+    color: #444;
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #0077cc;
+    background-color: #f0f8ff; /* Subtle background */
+}
+
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+    h2 {
+        font-size: 22px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    p, ul, ol {
+        font-size: 16px;
+    }
+}
+

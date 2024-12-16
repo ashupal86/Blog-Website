@@ -82,6 +82,7 @@ class POSTS:
                 post_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 post_title TEXT NOT NULL,
                 post_content TEXT NOT NULL,
+                post_content_md TEXT NOT NULL,
                 post_author TEXT NOT NULL,
                 tags TEXT NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)
@@ -90,10 +91,20 @@ class POSTS:
                 post_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 post_title TEXT NOT NULL,
                 post_content TEXT NOT NULL,
+                post_content_md TEXT NOT NULL,
                 post_author TEXT NOT NULL,
                 tags TEXT NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)
             """)
+            self.cursor.execute("""CREATE TABLE IF NOT EXISTS deleted (
+                post_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                post_title TEXT NOT NULL,
+                post_content TEXT NOT NULL,
+                post_content_md TEXT NOT NULL,
+                post_author TEXT NOT NULL,
+                tags TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)
+                                """)
             self.db.commit()
         except sqlite3.Error as e:
             self.log_activity("Error initializing POSTS class: " + str(e))
@@ -104,12 +115,13 @@ class POSTS:
             markdown = mistune.create_markdown()
             html_content = markdown(post_content)
 
-            self.cursor.execute("INSERT INTO posts (post_title, post_content, post_author, tags) VALUES (?, ?, ?, ?)", 
-                                (post_title, html_content, post_author, tags))
+            self.cursor.execute("INSERT INTO posts (post_title, post_content,post_content_md, post_author, tags) VALUES (?, ?, ?,?, ?)", 
+                                (post_title, html_content,str(post_content), post_author, tags))
             self.db.commit()
             self.log_activity(f"Post created by {post_author}")
             return json.dumps({"status": 200, "msg": "Post created successfully"})
         except sqlite3.Error as e:
+            print(e)
             return json.dumps({"status": 500, "msg": "Internal server error"})
 
     def delete_post(self, post_id):
@@ -118,7 +130,7 @@ class POSTS:
             # instead of deleting the post move the post to deleted post tabel
             self.cursor.execute('SELECT * from posts WHERE post_id = ?',(post_id,))
             post=self.cursor.fetchone()
-            self.cursor.execute('INSERT INTO deleted_posts(post_id, post_title, post_content, post_author, tags, timestamp) VALUES(?,?,?,?,?,?)',(post['post_id'],post['post_title'],post['post_content'],post['post_author'],post['tags'],post['timestamp']))
+            self.cursor.execute('INSERT INTO deleted_posts(post_id, post_title, post_content,post_content_md, post_author, tags, timestamp) VALUES(?,?,?,?,?,?,?)',(post['post_id'],post['post_title'],post['post_content'],post['post_content_md'],post['post_author'],post['tags'],post['timestamp']))
             self.cursor.execute("DELETE FROM posts WHERE post_id = ?", (post_id,))
             self.db.commit()
             self.log_activity(f"Post deleted with ID {post_id}")
@@ -131,6 +143,24 @@ class POSTS:
         self.connect_to_db()
         try:
             self.cursor.execute("SELECT * FROM posts ORDER BY timestamp DESC")
+            posts = self.cursor.fetchall()
+            return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
+        except sqlite3.Error as e:
+            return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+    def get_deleted_posts(self, post_author):
+        self.connect_to_db()
+        try:
+            self.cursor.execute("SELECT * FROM deleted_posts ORDER BY timestamp DESC WHERE post_author = ?", (post_author,))
+            posts = self.cursor.fetchall()
+            return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
+        except sqlite3.Error as e:
+            return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+    def get_all_deleted_posts(self):
+        self.connect_to_db()
+        try:
+            self.cursor.execute("SELECT * FROM deleted_posts ORDER BY timestamp DESC")
             posts = self.cursor.fetchall()
             return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
         except sqlite3.Error as e:
@@ -157,6 +187,35 @@ class POSTS:
             return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
         except sqlite3.Error as e:
             return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+    def edit_post(self, post_id, post_title, post_content, post_author, tags):
+        self.connect_to_db()
+        print(post_id)
+        try:
+            markdown = mistune.create_markdown()
+            html_content = markdown(post_content)
+            self.cursor.execute("UPDATE posts SET post_title = ?, post_content = ?, post_content_md = ?, post_author = ?, tags = ? WHERE post_id = ?", 
+                                (post_title, html_content,post_content, post_author, tags, post_id))
+            self.db.commit()
+            self.log_activity(f"Post edited with ID {post_id}")
+            return json.dumps({"status": 200, "msg": "Post edited successfully"})
+        except sqlite3.Error as e:
+            return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+    def restore_post(self, post_id):
+        self.connect_to_db()
+        try:
+            self.cursor.execute('SELECT * from deleted_posts WHERE post_id = ?',(post_id,))
+            post=self.cursor.fetchone()
+            self.cursor.execute('INSERT INTO posts(post_id, post_title, post_content,post_content_md, post_author, tags, timestamp) VALUES(?,?,?,?,?,?,?)',(post['post_id'],post['post_title'],post['post_content'],post['post_content_md'],post['post_author'],post['tags'],post['timestamp']))
+            self.cursor.execute("DELETE FROM deleted_posts WHERE post_id = ?", (post_id,))
+            self.db.commit()
+            self.log_activity(f"Post restored with ID {post_id}")
+            return json.dumps({"status": 200, "msg": "Post restored successfully"})
+        except sqlite3.Error as e:
+            return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+
 
     def log_activity(self, message):
         log_file = 'log.txt'
@@ -225,8 +284,9 @@ class Admin:
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         db = get_db('User.db')
         cur = db.execute('SELECT * FROM admin_users WHERE username = ? AND password = ?', (username, hashed_password))
-        self.log_activity(username, 'Login', 'Success' if cur.fetchone() else 'Failed')
-        return cur.fetchone()
+        result=cur.fetchone()
+        self.log_activity(username, 'Login', 'Success' if result else 'Failed')
+        return result
 
     def get_registered_users(self):
         db = get_db('User.db')

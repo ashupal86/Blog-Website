@@ -16,23 +16,23 @@
         <div class="col-md-9">
             <div class="post_form">
                 <form action="{{url_for('create_post')}}" method="post">
-                    <h2>Create Post</h2>
+                    <h2>{% if title %}Edit Post{% else %}Create Post{% endif %}</h2>
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" name="post_title" required>
+                        <input type="text" class="form-control" id="title" {% if post %}value="{{ post.data.post_title }}"{% endif %} name="post_title" required>
                     </div>
                     <div class="form-group">
                         <label for="content">Content</label>
-                        <textarea class="form-control" id="content" name="post_content" rows="10" required></textarea>
+                        <textarea class="form-control" id="content" name="post_content"  rows="10" required>{% if post %}{{ post.data.post_content_md }}{% endif %}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>
-                        <input type="text" class="form-control" id="tags" name="tags">
+                        <input type="text" class="form-control"  id="tags" {% if post %}value="{{ post.data.tags }}"{% endif %} name="tags">
                         <datalist>
                             
                         </datalist>
                     </div>
-                    <button type="submit" class="btn btn-primary">Create Post</button>
+                    <button type="submit" class="btn btn-primary">{% if post %}Update{% else %}Create{% endif %} Post</button>
                 </form>
             </div>
         </div>

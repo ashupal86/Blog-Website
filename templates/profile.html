@@ -47,6 +47,7 @@
             <div class="d-flex justify-content-between">
                 <h5 class="mb-1">${post["post_title"]}</h5>
                 <div>
+                    <button class="btn btn-primary btn-sm" onclick="editPost('${post['post_id']}')">Edit Post</button>
                 <button class="btn btn-primary btn-sm" onclick="sharePost('${post['post_id']}')">Share Post</button>
                 <button class="btn btn-danger btn-sm" onclick="deletePost('${post['post_id']}')">Delete Post</button>
                 </div>

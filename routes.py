@@ -109,6 +109,23 @@ def create_post():
             flash(result['msg'], 'danger')
     return render_template('create_post.html')
 
+@app.route('/edit_post/<postid>', methods=['GET', 'POST'])
+@login_required
+def edit_post(postid):
+    if request.method == 'POST':
+        post_title = request.form['post_title']
+        post_content = request.form['post_content']
+        post_author = session['credentials']
+        tags = request.form['tags']
+        response = posts.edit_post(postid, post_title, post_content, post_author, tags)
+        result = json.loads(response)
+        if result['status'] == 200:
+            flash(result['msg'], 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash(result['msg'], 'danger')
+    return render_template('create_post.html',title='Edit Post',post=json.loads(posts.get_post_by_id(postid)))
+
 @app.route('/get_posts')
 def get_posts():
     response = posts.get_posts()
@@ -122,9 +139,10 @@ def get_posts():
 @app.route('/post/<postid>')
 def share(postid):
     response=posts.get_post_by_id(postid)
+    
     data=json.loads(response)
-    # print(response.status)
-    return render_template('post.html',post=jsonify(data))
+    # print(data.get('status'))
+    return render_template('post.html',post=data)
 
 @app.route('/delete_post',methods=['POST'])
 @login_required
@@ -135,6 +153,35 @@ def delete_post():
         author=data.get('author')
         if session['credentials']==author:
             response=posts.delete_post(post_id)
+            result=json.loads(response)
+            # print(result['msg'])
+            if result['status']==200:
+                flash(result['msg'],'success')
+                return result
+            else:
+                flash(result['msg'],'danger')
+                return result
+        flash('Login First','danger')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/load_deleted',methods=['GET'])
+@login_required
+def load_deleted():
+    username=session['credentials']
+    response=posts.get_deleted_posts(username)
+    data=json.loads(response)
+    return jsonify(data)
+
+@app.route('/restore_post',methods=['POST'])
+@login_required
+def restore_post():
+    if request.method=="POST":
+        data=request.get_json()
+        post_id=data.get('postid')
+        author=data.get('author')
+        if session['credentials']==author:
+            response=posts.restore_post(post_id)
             result=json.loads(response)
             # print(result['msg'])
             if result['status']==200:
@@ -181,6 +228,15 @@ def admin_():
     pending_users_list = [dict(row) for row in pending_users]
     
     return render_template('admin.html', users=get_users_list, pending_users=pending_users_list)
+
+
+@app.route('/load_deleted_posts', methods=['GET'])
+def load_deleted_posts():
+    if 'admin' not in session:
+        flash('Admin access required', 'danger')
+        return redirect(url_for('admin_login'))
+    deleted_posts = posts.get_all_deleted_posts()
+    return jsonify(json.loads(deleted_posts))
 
 @app.route('/approve_user', methods=['POST'])
 def approve_user():

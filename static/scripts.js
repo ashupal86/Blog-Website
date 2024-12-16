@@ -129,3 +129,7 @@ function deletePost(postid){
 function sharePost(postid){
     location.href=`/post/${postid}`
 }
+
+function editPost(postid){
+    location.href=`/edit_post/${postid}`
+}

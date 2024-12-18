@@ -29,6 +29,10 @@ def login_required(func):
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     try:
@@ -126,14 +130,20 @@ def edit_post(postid):
             flash(result['msg'], 'danger')
     return render_template('create_post.html',title='Edit Post',post=json.loads(posts.get_post_by_id(postid)))
 
-@app.route('/get_posts')
-def get_posts():
-    response = posts.get_posts()
+@app.route('/get_posts/<page>')
+@app.route('/get_posts',defaults={'page':'1'})
+def get_posts(page):
+    post=10
+    offset=(int(page)-1)*post
+
+    response = posts.get_posts(offset)
     data = json.loads(response)
     if data['status'] == 200:
         return jsonify(data)
     else:
         return jsonify({"error": data['msg']})
+    
+
     
 # add a route that allow us to share post using post id
 @app.route('/post/<postid>')

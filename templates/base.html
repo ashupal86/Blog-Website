@@ -169,8 +169,22 @@
     </main>
 
     <footer class="text-center mt-4">
-        <p>&copy; 2024 ABlog</p>
+        <p>&copy; 2024 Tech Blogging Platform. All rights reserved.</p>
     </footer>
     
+
+    <script>
+        
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(function(registration) {
+            console.log('Service Worker registered with scope: ', registration.scope);
+        })
+        .catch(function(error) {
+            console.log('Service Worker registration failed: ', error);
+        });
+}
+
+    </script>
 </body>
 </html>

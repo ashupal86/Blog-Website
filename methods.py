@@ -31,6 +31,9 @@ class User:
         try:
             db = get_db()
             cursor = db.cursor()
+            users = cursor.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
+            if users:
+                return json.dumps({"status": 400, "msg": "Username already exists"})
             hashed_password = self.hash_password(password)
             hashed_username = self.hash_password(username)
             
@@ -139,10 +142,10 @@ class POSTS:
             # print(e)
             return json.dumps({"status": 500, "msg": "Internal server error"})
 
-    def get_posts(self):
+    def get_posts(self,offset):
         self.connect_to_db()
         try:
-            self.cursor.execute("SELECT * FROM posts ORDER BY timestamp DESC")
+            self.cursor.execute(f"SELECT * FROM posts ORDER BY timestamp DESC LIMIT 10 OFFSET {offset}")
             posts = self.cursor.fetchall()
             return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
         except sqlite3.Error as e:

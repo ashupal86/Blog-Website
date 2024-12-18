@@ -6,10 +6,12 @@
         <!-- Main Content Area -->
         <div class="col-md-12">
             <h1>Welcome to the Blog</h1>
+            <input type="text" id="search-input" placeholder="Type to search..." />
             <div class="list-group" id="posts-container">
                 <!-- Posts will be dynamically loaded here -->
             </div>
         </div>
+        <button class="btn " onclick="fetchPosts()">Load More</button>
     </div>
 </div>
 
@@ -19,13 +21,15 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchPosts();
 });
 
+let page=1
 function fetchPosts() {
-    fetch('/get_posts')
+    fetch(`/get_posts?page=${page}`)
         .then(response => response.json())
         .then(data => {
             if (data.status === 200) {
                 renderPosts(data.data);
                 console.log(data.data.reverse());
+                page++;
 
             } else {
                 alert('Failed to load posts');
@@ -39,6 +43,10 @@ function renderPosts(posts) {
     posts.forEach(post => {
         const postItem = document.createElement('div');
         postItem.className = 'list-group-item mb-3';
+        postItem.onclick = function() {
+            window.location.href = '/post/' + post['post_id'];
+        }
+    
         dateformat=post['timestamp'].split(' ')[0].split('-');
         postItem.innerHTML = `
             <div class="d-flex justify-content-between">
@@ -46,9 +54,9 @@ function renderPosts(posts) {
                 <button class="btn btn-primary btn-sm" onclick="sharePost('${post['post_id']}')">Share Post</button> <!-- post_id -->
             </div>
             <p class="mb-1"><strong>Author:</strong> ${post['post_author']}</p> <!-- post_author -->
-<p class="mb-1"><strong>Date:</strong> ${dateformat[2]}-${dateformat[1]}-${dateformat[0]}</p>
-            <p class="mb-1">${post['post_content']}</p> <!-- post_content -->
+            <p class="mb-1"><strong>Date:</strong> ${dateformat[2]}-${dateformat[1]}-${dateformat[0]}</p>
             <p class="mb-1">${post['tags']}</p> <!-- tags -->
+            <p class="mb-1">${post['post_content']}</p> <!-- post_content -->
             <div id="post-image-${post[0]}" style="display: none;">
                 <!-- Image will be generated here -->
             </div>
@@ -57,6 +65,28 @@ function renderPosts(posts) {
         postsContainer.appendChild(postItem);
     });
 }
+
+
+
+document.getElementById('search-input').addEventListener('input', function () {
+    const searchValue = this.value.toLowerCase();
+    const contentDiv = document.getElementById('posts-container');
+
+    // Remove previous highlights
+    const highlighted = contentDiv.querySelectorAll('mark');
+    highlighted.forEach(el => {
+        el.outerHTML = el.innerHTML;
+    });
+
+    if (searchValue) {
+        // Highlight new matches
+        const contentHTML = contentDiv.innerHTML;
+        const regex = new RegExp(`(${searchValue})`, 'gi');
+        const newHTML = contentHTML.replace(regex, '<mark>$1</mark>');
+        contentDiv.innerHTML = newHTML;
+    }
+});
+
 
 
 </script>

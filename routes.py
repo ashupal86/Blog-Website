@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from methods import User, POSTS, Admin, close_db
 import json
 from functools import wraps
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 app = Flask(__name__)
 app.teardown_appcontext(close_db)
@@ -15,6 +18,15 @@ posts = POSTS()
 # Initialize Admin class within app context
 admin = Admin(app)
 
+limiter = Limiter(
+    get_remote_address,  
+    app=app,
+    default_limits=["1000 per day", "100 per hour"],
+    storage_uri="memcached://localhost:11211",
+    storage_options={}
+)
+
+
 # Example decorator to check if user is logged in
 def login_required(func):
     @wraps(func)
@@ -25,15 +37,19 @@ def login_required(func):
         return func(*args, **kwargs)
     return wrapper
 
+
+default=limiter.shared_limit("10 per minute",scope="default")
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/about')
+@default
 def about():
     return render_template('about.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     try:
     
@@ -57,6 +73,7 @@ def login():
         return redirect('/')
 
 @app.route('/register', methods=['POST'])
+@limiter.limit("2 per minute")
 def register():
     username = request.form['username']
     password = request.form['password']
@@ -80,6 +97,7 @@ def dashboard():
     return render_template('profile.html', username=username)
 
 @app.route('/get_user_post', methods=['POST'])
+@login_required
 def user_post():
     username = session['credentials']
     get_posts = posts.get_user_posts(username)
@@ -98,6 +116,7 @@ def logout():
 
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("1 per minute")
 def create_post():
     if request.method == 'POST':
         post_title = request.form['post_title']
@@ -147,6 +166,7 @@ def get_posts(page):
     
 # add a route that allow us to share post using post id
 @app.route('/post/<postid>')
+@limiter.limit("5 per minute")
 def share(postid):
     response=posts.get_post_by_id(postid)
     
@@ -210,6 +230,7 @@ def restore_post():
 
 # Admin routes
 @app.route('/admin_login', methods=['GET', 'POST'])
+@limiter.limit("2 per minute")
 def admin_login():
     if request.method == 'POST':
         username = request.form['username']
@@ -329,6 +350,10 @@ def logout_admin():
     flash('Admin has been logged out', 'info')
     return redirect(url_for('admin_login'))
 
+
+@app.errorhandler(429)  # Too Many Requests
+def ratelimit_error(e):
+    return jsonify(error="Rate limit exceeded. Try again later."), 429
 
 
 

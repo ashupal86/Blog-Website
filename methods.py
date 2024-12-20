@@ -74,8 +74,8 @@ class POSTS:
         self.cursor = None
 
     def connect_to_db(self):
-        current_month = datetime.datetime.now().strftime("%Y_%m")
-        db_name = os.path.join(POSTS_DATABASE_DIR, f'Post_{current_month}.db')
+        current_year = datetime.datetime.now().strftime("%Y")
+        db_name = os.path.join(POSTS_DATABASE_DIR, f'Post_{current_year}.db')
         self.db = sqlite3.connect(db_name)
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
@@ -123,6 +123,20 @@ class POSTS:
             self.db.commit()
             self.log_activity(f"Post created by {post_author}")
             return json.dumps({"status": 200, "msg": "Post created successfully"})
+        except sqlite3.Error as e:
+            print(e)
+            return json.dumps({"status": 500, "msg": "Internal server error"})
+        
+
+    def search_post(self, query):
+        self.connect_to_db()
+        try:
+            self.cursor.execute("SELECT * FROM posts WHERE post_title LIKE '%' || ? || '%' OR post_author LIKE '%' || ? || '%' OR tags LIKE '%' || ? || '%' ORDER BY timestamp DESC" ,( query, query, query))
+
+            posts = self.cursor.fetchall()
+            if not posts:
+                return json.dumps({"status": 400, "msg": "No posts found", "data": []})
+            return json.dumps({"status": 200, "msg": "Posts fetched successfully", "data": [dict(post) for post in posts]})
         except sqlite3.Error as e:
             print(e)
             return json.dumps({"status": 500, "msg": "Internal server error"})

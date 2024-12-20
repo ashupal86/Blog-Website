@@ -6,7 +6,17 @@
         <!-- Main Content Area -->
         <div class="col-md-12">
             <h1>Welcome to the Blog</h1>
-            <input type="text" id="search-input" placeholder="Type to search..." />
+            <input 
+            type="text" 
+            id="search-input" 
+            name="q" 
+            placeholder="Type to search..." 
+            oninput="debounceSearch()"
+        />
+              <!-- Loading Indicator -->
+
+
+
             <div class="list-group" id="posts-container">
                 <!-- Posts will be dynamically loaded here -->
             </div>
@@ -17,6 +27,42 @@
 
 <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script>
+    let timeout;
+
+    function debounceSearch() {
+        // Clear the previous timeout (if any)
+        clearTimeout(timeout);
+    
+        // Set a new timeout for the search request after a delay
+        timeout = setTimeout(function() {
+            const query = document.getElementById('search-input').value;
+            fetchSearchResults(query);
+        }, 500);  // 500ms delay
+    }
+    
+    function fetchSearchResults(query) {
+        if (query.trim() === '') {
+            return; // Do nothing if the query is empty
+        }
+    
+        // Make the GET request to the /search route
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())  // Assuming the response is JSON
+            .then(data => {
+                // Check if there is data and pass it to renderPosts
+                if (data ) {
+                    document.getElementById('posts-container').innerHTML = '';
+                    renderPosts(data.data);
+                    console.log(data);
+                } else {
+                    // Optionally handle case where no results are found
+                    document.getElementById('posts-container').innerHTML = 'No results found.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+            });
+    }
 document.addEventListener("DOMContentLoaded", function() {
     fetchPosts();
 });
@@ -67,25 +113,6 @@ function renderPosts(posts) {
 }
 
 
-
-document.getElementById('search-input').addEventListener('input', function () {
-    const searchValue = this.value.toLowerCase();
-    const contentDiv = document.getElementById('posts-container');
-
-    // Remove previous highlights
-    const highlighted = contentDiv.querySelectorAll('mark');
-    highlighted.forEach(el => {
-        el.outerHTML = el.innerHTML;
-    });
-
-    if (searchValue) {
-        // Highlight new matches
-        const contentHTML = contentDiv.innerHTML;
-        const regex = new RegExp(`(${searchValue})`, 'gi');
-        const newHTML = contentHTML.replace(regex, '<mark>$1</mark>');
-        contentDiv.innerHTML = newHTML;
-    }
-});
 
 
 

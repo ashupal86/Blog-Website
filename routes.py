@@ -48,6 +48,19 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/search',methods=['GET'])
+def search():
+    query=request.args.get('q')
+    if query:
+        
+        response=posts.search_post(query)
+        
+                
+
+        return response
+    else:
+        return posts.get_posts(0)
+    
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def login():

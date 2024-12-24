@@ -1,0 +1,35 @@
+[2024-12-21 13:05:13 +0000] [10287] [INFO] Starting gunicorn 20.1.0
+[2024-12-21 13:05:13 +0000] [10287] [INFO] Listening at: http://0.0.0.0:8000 (10287)
+[2024-12-21 13:05:13 +0000] [10287] [INFO] Using worker: gthread
+[2024-12-21 13:05:13 +0000] [10288] [INFO] Booting worker with pid: 10288
+[2024-12-21 13:05:13 +0000] [10289] [INFO] Booting worker with pid: 10289
+[2024-12-21 13:05:13 +0000] [10290] [INFO] Booting worker with pid: 10290
+[2024-12-21 13:05:13 +0000] [10291] [INFO] Booting worker with pid: 10291
+[2024-12-21 13:12:47 +0000] [10287] [INFO] Handling signal: int
+[2024-12-21 13:12:47 +0000] [10289] [INFO] Worker exiting (pid: 10289)
+[2024-12-21 13:12:47 +0000] [10288] [INFO] Worker exiting (pid: 10288)
+[2024-12-21 13:12:47 +0000] [10290] [INFO] Worker exiting (pid: 10290)
+[2024-12-21 13:12:47 +0000] [10291] [INFO] Worker exiting (pid: 10291)
+[2024-12-21 13:12:47 +0000] [10287] [INFO] Shutting down: Master
+[2024-12-21 15:20:52 +0000] [843] [INFO] Starting gunicorn 20.1.0
+[2024-12-21 15:20:52 +0000] [843] [INFO] Listening at: http://0.0.0.0:8000 (843)
+[2024-12-21 15:20:52 +0000] [843] [INFO] Using worker: gthread
+[2024-12-21 15:20:52 +0000] [844] [INFO] Booting worker with pid: 844
+[2024-12-21 15:20:52 +0000] [845] [INFO] Booting worker with pid: 845
+[2024-12-21 15:20:52 +0000] [846] [INFO] Booting worker with pid: 846
+[2024-12-21 15:20:53 +0000] [847] [INFO] Booting worker with pid: 847
+[2024-12-21 15:28:03 +0000] [847] [INFO] Autorestarting worker after current request.
+[2024-12-21 15:28:03 +0000] [847] [INFO] Worker exiting (pid: 847)
+[2024-12-21 15:28:03 +0000] [906] [INFO] Booting worker with pid: 906
+[2024-12-21 15:28:04 +0000] [846] [INFO] Autorestarting worker after current request.
+[2024-12-21 15:28:04 +0000] [846] [INFO] Worker exiting (pid: 846)
+[2024-12-21 15:28:04 +0000] [908] [INFO] Booting worker with pid: 908
+[2024-12-21 15:28:05 +0000] [844] [INFO] Autorestarting worker after current request.
+[2024-12-21 15:28:05 +0000] [844] [INFO] Worker exiting (pid: 844)
+[2024-12-21 15:28:05 +0000] [913] [INFO] Booting worker with pid: 913
+[2024-12-21 15:30:32 +0000] [843] [INFO] Handling signal: int
+[2024-12-21 15:30:32 +0000] [845] [INFO] Worker exiting (pid: 845)
+[2024-12-21 15:30:32 +0000] [906] [INFO] Worker exiting (pid: 906)
+[2024-12-21 15:30:32 +0000] [913] [INFO] Worker exiting (pid: 913)
+[2024-12-21 15:30:32 +0000] [908] [INFO] Worker exiting (pid: 908)
+[2024-12-21 15:30:34 +0000] [843] [INFO] Shutting down: Master

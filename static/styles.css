@@ -1,193 +1,175 @@
-@import url('./bootstrap/css/bootstrap.min.css');
-
-#progress-bar {
-    width: 100%; /* Example width */
-    height: 4px; /* Example height */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-
-}
-
-/* this is for create post html */
-
-
-
-
-.container-fluid {
-    height: 100vh; /* Full viewport height */
-    overflow-x: hidden; /* Hide horizontal overflow */
-}
-
-#help-code {
-    height: 60vh; /* 60% of viewport height */
-    overflow-y: auto; /* Enable vertical scroll */
-    padding: 20px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 25%; /* 25% of viewport width */
-    background-color: #f0f0f0; /* Light background color */
-    border-left: 1px solid #ccc; /* Border for separation */
-}
-
-.help {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 25%; /* 25% of viewport width */
-    overflow-y: auto; /* Enable vertical scroll */
-    height: 40vh; /* 40% of viewport height */
-}
-
-.help a {
-    display: block;
-    color: #fff;
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
-.help a:hover {
-    color: #ffc107; /* Yellow */
-}
-
-.help-section {
-    display: none;
-}
-
-.help-section.active {
-    display: block;
-}
-
-
-.list-group-item>p>img{
-    width: 25vw;
-    height: 30vh;
-}
-
-.list-group-item{
-    overflow: hidden;
-    width: 100%;
-    max-height: 30vh;
-}
-
-.list-group-item:hover{
-    cursor: pointer;
-}
- 
-
-/* Ensure all images in post_content are responsive and maintain 16:9 aspect ratio */
-.post-content img {
-    width: 100%; /* Full width */
-    aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
-    object-fit: cover; /* Ensure content fits nicely inside the defined aspect ratio */
-    display: block; /* Remove inline spacing issues */
-    margin: 0 auto; /* Center the images if needed */
-}
-
-
-/* Base styles for the body */
-body {
-    font-size: clamp(16px, 1.5vw, 18px); /* Dynamically scales between 16px and 18px */
-    line-height: 1.7; /* Comfortable line height for paragraphs */
+/* General Styles */
+body, html {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Open Sans', Arial, sans-serif; /* Change font to Open Sans for better readability */
     margin: 0;
     padding: 0;
-    color: #333; /* Dark gray for readability */
-    background-color: #f9f9f9; /* Light background for contrast */
+    box-sizing: border-box;
 }
 
-/* Headings */
-h1 {
-    font-size: clamp(28px, 3vw, 36px); /* Main heading, responsive */
-    font-weight: bold;
-    line-height: 1.4;
-    color: #222; /* Slightly darker for emphasis */
-    margin-bottom: 1rem;
-    margin-top: 2rem;
+.navbar {
+    background-color: #1e1e1e; /* Dark background for navbar */
+    padding: 10px 20px;
+    border-bottom: 1px solid #333333; /* Optional: adds subtle border at the bottom */
 }
 
-h2 {
-    font-size: clamp(24px, 2.5vw, 28px); /* Secondary heading */
-    font-weight: bold;
-    line-height: 1.5;
-    color: #333;
-    margin-bottom: 0.8rem;
-    margin-top: 1.5rem;
+.navbar .navbar-brand {
+    color: #ffffff;
+    font-family: 'Lora', serif; /* Serif font for brand for a more stylish look */
+    font-size: 1.8rem; /* Adjust brand font size for better visual impact */
 }
 
-h3 {
-    font-size: clamp(20px, 2vw, 24px); /* Tertiary heading */
-    font-weight: bold;
-    line-height: 1.6;
-    color: #444;
-    margin-bottom: 0.5rem;
-    margin-top: 1rem;
+.navbar .navbar-nav .nav-link {
+    color: #b0b0b0; /* Light gray color for nav links */
+    font-size: 1.1rem; /* Adjust nav link font size */
 }
 
-/* Paragraphs */
+.navbar .navbar-nav .nav-link:hover {
+    color: #ffffff; /* White color on hover */
+}
+
+.navbar-toggler-icon {
+    background-color: #ffffff;
+}
+
+.navbar .btn {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.navbar .btn:hover {
+    background-color: #333333;
+    border-color: #ffffff;
+}
+
+footer {
+    background-color: #1e1e1e;
+    color: #b0b0b0;
+    padding: 10px;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* List Group Styles */
+.list-group-item {
+    background-color: #1e1e1e;
+    border-color: #333333;
+    color: #e0e0e0;
+}
+
+.list-group-item:hover {
+    background-color: #333333;
+}
+
+/* Image Styles */
+img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9; /* Ensure a 16:9 aspect ratio */
+    object-fit: cover; /* Maintain aspect ratio while filling the container */
+}
+
+/* Heading and Paragraph Styles */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+    font-family: 'Lora', serif; /* Use serif font for headings */
+}
+
 p {
-    font-size: clamp(16px, 1.5vw, 18px); /* Standard paragraph text */
-    margin-bottom: 1.5rem;
-    color: #555; /* Subtle gray for a softer look */
+    color: #e0e0e0;
+    font-family: 'Open Sans', Arial, sans-serif; /* Use sans-serif for paragraphs */
+    font-size: 1rem; /* Adjust paragraph font size */
 }
 
-/* Small text (e.g., captions or notes) */
-small {
-    font-size: clamp(14px, 1.2vw, 16px); /* Slightly smaller text */
-    color: #666; /* Lighter gray for less emphasis */
+/* Button Styles */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
-/* Links */
-a {
-    font-size: inherit; /* Match surrounding text size */
-    text-decoration: none;
-    color: #0077cc; /* Blog-friendly blue */
-    transition: color 0.3s ease;
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
 }
 
-a:hover {
-    color: #0056a3; /* Darker blue on hover */
-    text-decoration: underline;
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
 }
 
-/* Lists */
-ul, ol {
-    font-size: clamp(16px, 1.5vw, 18px); /* Matches paragraph text size */
-    margin-bottom: 1.5rem;
-    padding-left: 2rem; /* Indent for clarity */
-    line-height: 1.7;
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
 }
 
-/* Blockquotes */
-blockquote {
-    font-size: clamp(18px, 2vw, 20px);
-    font-style: italic;
-    color: #444;
-    margin: 1.5rem 0;
-    padding: 1rem 1.5rem;
-    border-left: 4px solid #0077cc;
-    background-color: #f0f8ff; /* Subtle background */
+/* Flash Message Styles */
+#flash-message-container {
+    background-color: #444444;
+    color: #ffffff;
 }
 
-
-
-/* Responsive Adjustments */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 24px;
+    .navbar .navbar-nav {
+        text-align: center;
     }
-    h2 {
-        font-size: 22px;
+
+    .navbar .navbar-nav .nav-item {
+        margin: 10px 0;
     }
-    h3 {
-        font-size: 20px;
+
+    .list-group-item {
+        padding: 15px;
     }
-    p, ul, ol {
-        font-size: 16px;
+
+    /* Adjust image aspect ratio for smaller devices */
+    img {
+        aspect-ratio: 16/9;
+    }
+
+    .btn {
+        width: 100%; /* Make buttons take full width on mobile */
+        margin-top: 10px;
     }
 }
 
+@media (max-width: 576px) {
+    .navbar .navbar-brand {
+        font-size: 1.5rem; /* Smaller font size for navbar brand on small screens */
+    }
+
+    #search-input {
+        font-size: 1rem; /* Adjust input size for mobile */
+    }
+
+    .list-group-item {
+        font-size: 0.9rem; /* Adjust font size for list items */
+    }
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar {
+    background-color: #1e1e1e; /* Ensure navbar stays dark */
+}
+
+body.dark-mode .navbar .navbar-nav .nav-link {
+    color: #b0b0b0;
+}
+
+body.dark-mode .navbar .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
+
+body.dark-mode footer {
+    background-color: #1e1e1e;
+    color: #b0b0b0;
+}
